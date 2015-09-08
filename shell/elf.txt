@@ -1,0 +1,127 @@
+ELF 头：
+  Magic：   7f 45 4c 46 01 01 01 00 00 00 00 00 00 00 00 00 
+  Class:                             ELF32
+  Data:                              2's complement, little endian
+  Version:                           1 (current)
+  OS/ABI:                            UNIX - System V
+  ABI Version:                       0
+  Type:                              EXEC (可执行文件)
+  Machine:                           Intel 80386
+  Version:                           0x1
+  入口点地址：               0x80480a0
+  程序头起点：          52 (bytes into file)
+  Start of section headers:          14468 (bytes into file)
+  标志：             0x0
+  本头的大小：       52 (字节)
+  程序头大小：       32 (字节)
+  Number of program headers:         3
+  节头大小：         40 (字节)
+  节头数量：         16
+  字符串表索引节头： 13
+
+节头：
+  [Nr] Name              Type            Addr     Off    Size   ES Flg Lk Inf Al
+  [ 0]                   NULL            00000000 000000 000000 00      0   0  0
+  [ 1] .text             PROGBITS        080480a0 0000a0 000c2f 00  AX  0   0 16
+  [ 2] .rodata           PROGBITS        08048ccf 000ccf 000095 01 AMS  0   0  1
+  [ 3] .eh_frame         PROGBITS        08048d64 000d64 0005c4 00   A  0   0  4
+  [ 4] .bss              NOBITS          0804a340 001340 000100 00  WA  0   0 32
+  [ 5] .comment          PROGBITS        00000000 001328 000029 01  MS  0   0  1
+  [ 6] .debug_aranges    PROGBITS        00000000 001351 000048 00      0   0  1
+  [ 7] .debug_info       PROGBITS        00000000 001399 0012a8 00      0   0  1
+  [ 8] .debug_abbrev     PROGBITS        00000000 002641 0003e4 00      0   0  1
+  [ 9] .debug_line       PROGBITS        00000000 002a25 0002d5 00      0   0  1
+  [10] .debug_str        PROGBITS        00000000 002cfa 000321 01  MS  0   0  1
+  [11] .debug_loc        PROGBITS        00000000 00301b 00072c 00      0   0  1
+  [12] .debug_ranges     PROGBITS        00000000 003747 0000a0 00      0   0  1
+  [13] .shstrtab         STRTAB          00000000 0037e7 00009a 00      0   0  1
+  [14] .symtab           SYMTAB          00000000 003b04 0003b0 10     15  16  4
+  [15] .strtab           STRTAB          00000000 003eb4 000143 00      0   0  1
+Key to Flags:
+  W (write), A (alloc), X (execute), M (merge), S (strings)
+  I (info), L (link order), G (group), T (TLS), E (exclude), x (unknown)
+  O (extra OS processing required) o (OS specific), p (processor specific)
+
+There are no section groups in this file.
+
+程序头：
+  Type           Offset   VirtAddr   PhysAddr   FileSiz MemSiz  Flg Align
+  LOAD           0x000000 0x08048000 0x08048000 0x01328 0x01328 R E 0x1000
+  LOAD           0x001340 0x0804a340 0x0804a340 0x00000 0x00100 RW  0x1000
+  GNU_STACK      0x000000 0x00000000 0x00000000 0x00000 0x00000 RW  0x10
+
+ Section to Segment mapping:
+  段节...
+   00     .text .rodata .eh_frame 
+   01     .bss 
+   02     
+
+There is no dynamic section in this file.
+
+该文件中没有重定位信息。
+
+The decoding of unwind sections for machine type Intel 80386 is not currently supported.
+
+Symbol table '.symtab' contains 59 entries:
+   Num:    Value  Size Type    Bind   Vis      Ndx Name
+     0: 00000000     0 NOTYPE  LOCAL  DEFAULT  UND 
+     1: 080480a0     0 SECTION LOCAL  DEFAULT    1 
+     2: 08048ccf     0 SECTION LOCAL  DEFAULT    2 
+     3: 08048d64     0 SECTION LOCAL  DEFAULT    3 
+     4: 0804a340     0 SECTION LOCAL  DEFAULT    4 
+     5: 00000000     0 SECTION LOCAL  DEFAULT    5 
+     6: 00000000     0 SECTION LOCAL  DEFAULT    6 
+     7: 00000000     0 SECTION LOCAL  DEFAULT    7 
+     8: 00000000     0 SECTION LOCAL  DEFAULT    8 
+     9: 00000000     0 SECTION LOCAL  DEFAULT    9 
+    10: 00000000     0 SECTION LOCAL  DEFAULT   10 
+    11: 00000000     0 SECTION LOCAL  DEFAULT   11 
+    12: 00000000     0 SECTION LOCAL  DEFAULT   12 
+    13: 00000000     0 FILE    LOCAL  DEFAULT  ABS shell.c
+    14: 00000000     0 FILE    LOCAL  DEFAULT  ABS syscall.c
+    15: 00000000     0 FILE    LOCAL  DEFAULT  ABS 
+    16: 080483d0    37 FUNC    GLOBAL DEFAULT    1 strcpy
+    17: 08048aae    27 FUNC    GLOBAL DEFAULT    1 read_line
+    18: 08048a93    27 FUNC    GLOBAL DEFAULT    1 waitpid
+    19: 08048820    85 FUNC    GLOBAL DEFAULT    1 _mkdir
+    20: 08048c90    63 FUNC    GLOBAL DEFAULT    1 syscall
+    21: 08048a7f    20 FUNC    GLOBAL DEFAULT    1 getpid
+    22: 080488e0   138 FUNC    GLOBAL DEFAULT    1 cat
+    23: 080489f2    27 FUNC    GLOBAL DEFAULT    1 puts
+    24: 08048bfb    34 FUNC    GLOBAL DEFAULT    1 dup2
+    25: 08048880    85 FUNC    GLOBAL DEFAULT    1 _rmdir
+    26: 08048970   130 FUNC    GLOBAL DEFAULT    1 _exec
+    27: 08048a0d    27 FUNC    GLOBAL DEFAULT    1 puts1
+    28: 08048c38    27 FUNC    GLOBAL DEFAULT    1 rmdir
+    29: 08048bb7    41 FUNC    GLOBAL DEFAULT    1 lseek
+    30: 08048ac9    27 FUNC    GLOBAL DEFAULT    1 sys_sleep
+    31: 080483a0     9 FUNC    GLOBAL DEFAULT    1 echo
+    32: 0804a340   256 OBJECT  GLOBAL DEFAULT    4 current_dir
+    33: 08048b36    41 FUNC    GLOBAL DEFAULT    1 write
+    34: 08048c75    27 FUNC    GLOBAL DEFAULT    1 chdir
+    35: 08048a42    34 FUNC    GLOBAL DEFAULT    1 exec
+    36: 08048b0d    41 FUNC    GLOBAL DEFAULT    1 read
+    37: 08048b5f    34 FUNC    GLOBAL DEFAULT    1 create
+    38: 08048a28    26 FUNC    GLOBAL DEFAULT    1 fork
+    39: 0804a328     0 NOTYPE  GLOBAL DEFAULT    4 __bss_start
+    40: 08048c53    34 FUNC    GLOBAL DEFAULT    1 lsdir
+    41: 080480a0   486 FUNC    GLOBAL DEFAULT    1 main
+    42: 08048400   117 FUNC    GLOBAL DEFAULT    1 strcmp
+    43: 08048be0    27 FUNC    GLOBAL DEFAULT    1 dup
+    44: 080487c0    85 FUNC    GLOBAL DEFAULT    1 rmfile
+    45: 08048760    93 FUNC    GLOBAL DEFAULT    1 mkfile
+    46: 08048660   132 FUNC    GLOBAL DEFAULT    1 cd
+    47: 08048480   466 FUNC    GLOBAL DEFAULT    1 convert_to_full_path
+    48: 08048b9c    27 FUNC    GLOBAL DEFAULT    1 delete_file
+    49: 08048290    84 FUNC    GLOBAL DEFAULT    1 parse
+    50: 0804a328     0 NOTYPE  GLOBAL DEFAULT    4 _edata
+    51: 0804a440     0 NOTYPE  GLOBAL DEFAULT    4 _end
+    52: 080486f0    98 FUNC    GLOBAL DEFAULT    1 ls
+    53: 08048a64    27 FUNC    GLOBAL DEFAULT    1 exit
+    54: 080483b0    27 FUNC    GLOBAL DEFAULT    1 strlen
+    55: 08048ae4    41 FUNC    GLOBAL DEFAULT    1 open
+    56: 08048c1d    27 FUNC    GLOBAL DEFAULT    1 mkdir
+    57: 08048b81    27 FUNC    GLOBAL DEFAULT    1 close
+    58: 080482f0   171 FUNC    GLOBAL DEFAULT    1 put_to_shell_tty
+
+No version information found in this file.
