@@ -39,46 +39,46 @@ static void exit_file(PCB *pcb);
 static void handle_waitpid(Msg *m);
 
 void init_pcb_manager() {
-	PCB *p = create_kthread(pcb_manager_thread);
-	PCB_MANAGER = p->pid;
+   PCB *p = create_kthread(pcb_manager_thread);
+   PCB_MANAGER = p->pid;
     printk("pcb pid%d\n", PCB_MANAGER);
-	wakeup(p);
+   wakeup(p);
 }
 
 static void pcb_manager_thread() {
-	Msg m;
-	while(true) {
-		receive(ANY, &m);
-		switch(m.type) {
-			case CREATE_PROCESS:  create_process(&m); break;
-			case FORK:  fork(&m); break;
-			case EXEC:  exec(&m); break;
-			case EXIT:  exit(&m); break;
-			case WAIT_PID: handle_waitpid(&m); break;
-			default: assert(0);
-		}
-	}
+   Msg m;
+   while(true) {
+      receive(ANY, &m);
+      switch(m.type) {
+         case CREATE_PROCESS:  create_process(&m); break;
+         case FORK:  fork(&m); break;
+         case EXEC:  exec(&m); break;
+         case EXIT:  exit(&m); break;
+         case WAIT_PID: handle_waitpid(&m); break;
+         default: assert(0);
+      }
+   }
 }
 
 static void create_process(Msg *m) {
-	lock();
-	PCB *new_pcb = list_entry(free_pcb.list.next, PCB, list);
-	//assert(new_pcb->pid <= 27);
-	list_del(&new_pcb->list);
+   lock();
+   PCB *new_pcb = list_entry(free_pcb.list.next, PCB, list);
+   //assert(new_pcb->pid <= 27);
+   list_del(&new_pcb->list);
     unlock();
     
     char* file_name = m->buf;
-	create_process_space(new_pcb->pid, file_name);
+   create_process_space(new_pcb->pid, file_name);
 
     init_fd_table(new_pcb);
 
-	init_pcb(new_pcb);
+   init_pcb(new_pcb);
     wakeup(new_pcb);
 
-	m->dest = m->src;
-	m->src = PCB_MANAGER;
-	m->ret = new_pcb->pid;
-	send(m->dest, m);
+   m->dest = m->src;
+   m->src = PCB_MANAGER;
+   m->ret = new_pcb->pid;
+   send(m->dest, m);
 }
 
 static void init_fd_table(PCB *pcb) {
@@ -92,18 +92,18 @@ static void init_fd_table(PCB *pcb) {
 }
 
 static void create_process_space(pid_t pid, char *file_name) {   //create space and load program.
-	Msg m;
-	m.src = PCB_MANAGER;
-	m.type = CREATE_SPACE;
-	m.i[0] = pid;
-	m.i[1] = (int)file_name;
-	send(MEMORY, &m);
-	receive(MEMORY, &m);
+   Msg m;
+   m.src = PCB_MANAGER;
+   m.type = CREATE_SPACE;
+   m.i[0] = pid;
+   m.i[1] = (int)file_name;
+   send(MEMORY, &m);
+   receive(MEMORY, &m);
 }
 
 /*static void wrap(void *fun) {
 
-	//((void(*)(int, char**))fun)(argc, argv);
+   //((void(*)(int, char**))fun)(argc, argv);
      ((int(*)())fun)();
      ListHead *prev = current->list.prev;
      list_del(&(current->list));
@@ -140,23 +140,23 @@ static void init_pcb(PCB *pcb) {
 
 
 static void fork(Msg *m) {
-	lock();
-	assert(!list_empty(&free_pcb.list));
-	PCB *new_pcb = list_entry(free_pcb.list.next, PCB, list);
-	list_del(&new_pcb->list);
+   lock();
+   assert(!list_empty(&free_pcb.list));
+   PCB *new_pcb = list_entry(free_pcb.list.next, PCB, list);
+   list_del(&new_pcb->list);
     unlock();
 
     PCB *ppcb = &pcb_pool[m->src];
 
     int offset = (int)(new_pcb->kstack - ppcb->kstack);
     if(offset > 0) {
-     	new_pcb->tf = (void*)((uint32_t)m->buf + (uint32_t)offset);      //pointer to first interrupt's tf.
+        new_pcb->tf = (void*)((uint32_t)m->buf + (uint32_t)offset);      //pointer to first interrupt's tf.
     } else {
-     	offset = -offset;
-     	new_pcb->tf = (void*)((uint32_t)m->buf - (uint32_t)offset);      //pointer to first interrupt's tf.
+        offset = -offset;
+        new_pcb->tf = (void*)((uint32_t)m->buf - (uint32_t)offset);      //pointer to first interrupt's tf.
     }
     memcpy(new_pcb->kstack, ppcb->kstack, KSTACK_SIZE);
-    ((TrapFrame*)(new_pcb->tf))->eax = 0;			//child process's ret is 0;
+    ((TrapFrame*)(new_pcb->tf))->eax = 0;         //child process's ret is 0;
 
     uint32_t *ebp_ptr = &(((TrapFrame*)(new_pcb->tf))->ebp);
     while(*ebp_ptr >= (uint32_t)ppcb->kstack && *ebp_ptr < (uint32_t)ppcb->kstack + KSTACK_SIZE) {       //initial ebp is set zero
@@ -183,9 +183,9 @@ static void fork(Msg *m) {
     copy_fd_table(new_pcb, ppcb);
 
     m->dest = m->src;
-	m->src = PCB_MANAGER;
-	m->ret = new_pcb->pid;
-	send(m->dest, m);
+   m->src = PCB_MANAGER;
+   m->ret = new_pcb->pid;
+   send(m->dest, m);
 }
 
 static void copy_fd_table(PCB *cpcb, PCB *ppcb) {
@@ -199,28 +199,28 @@ static void copy_fd_table(PCB *cpcb, PCB *ppcb) {
 }
 
 static void create_child_space(pid_t ppid, pid_t cpid) {
-	Msg m;
-	m.src = PCB_MANAGER;
-	m.type = CREATE_CHILD_SPACE;
-	m.i[0] = ppid;
-	m.i[1] = cpid;
-	send(MEMORY, &m);
-	receive(MEMORY, &m);
+   Msg m;
+   m.src = PCB_MANAGER;
+   m.type = CREATE_CHILD_SPACE;
+   m.i[0] = ppid;
+   m.i[1] = cpid;
+   send(MEMORY, &m);
+   receive(MEMORY, &m);
 }
 
 static void exec(Msg *m) {
-	PCB *pcb = &pcb_pool[m->src];
-	char file_name[256];
+   PCB *pcb = &pcb_pool[m->src];
+   char file_name[256];
     strcpy_to_kernel(pcb, file_name, (char*)m->i[0]);
 
-	char *va_args = (char*)(m->i[1]);            //vitual address of argment string
-	char buf[256]  __attribute((aligned(4)));
-	char *temp = (char *)buf + 4;           //first 4 byte used for saving string's address.
-	strcpy_to_kernel(pcb, temp, va_args);
-	int args_len = strlen(temp);
+   char *va_args = (char*)(m->i[1]);            //vitual address of argment string
+   char buf[256]  __attribute((aligned(4)));
+   char *temp = (char *)buf + 4;           //first 4 byte used for saving string's address.
+   strcpy_to_kernel(pcb, temp, va_args);
+   int args_len = strlen(temp);
 
     //need memory_manager alter space do something
-	if(exec_memory_manager(pcb->pid, file_name) == -1) {
+   if(exec_memory_manager(pcb->pid, file_name) == -1) {
         m->dest = m->src;
         m->ret = -1;
         m->src = PCB_MANAGER;
@@ -228,41 +228,41 @@ static void exec(Msg *m) {
         return;
     }
 
-	/*set argments in right place*/
-	uint32_t stack_base = 0xbfffffff;
-	char *new_args = (char*)((stack_base - args_len) ^ 0x3);     //  argment string's new address, align to 4
-	*((uint32_t *)(temp - 4)) = (uint32_t)new_args;                           //args's first 4 byte save argment string's new address
-	char *stack_head = new_args - 4;                                    //  stack need save new address.
-	copy_from_kernel(pcb, stack_head, temp-4, args_len+4 + 1);			//need copy '\0'
+   /*set argments in right place*/
+   uint32_t stack_base = 0xbfffffff;
+   char *new_args = (char*)((stack_base - args_len) ^ 0x3);     //  argment string's new address, align to 4
+   *((uint32_t *)(temp - 4)) = (uint32_t)new_args;                           //args's first 4 byte save argment string's new address
+   char *stack_head = new_args - 4;                                    //  stack need save new address.
+   copy_from_kernel(pcb, stack_head, temp-4, args_len+4 + 1);         //need copy '\0'
 
     pcb->lock_count = 0;
     pcb->is_kernel = false;
-	pcb->tf = &(pcb->kstack[KSTACK_SIZE - sizeof(TrapFrame)]); 
-	((TrapFrame*)(pcb->tf))->esp = (uint32_t)stack_head - 4;         //esp need point to return address
+   pcb->tf = &(pcb->kstack[KSTACK_SIZE - sizeof(TrapFrame)]); 
+   ((TrapFrame*)(pcb->tf))->esp = (uint32_t)stack_head - 4;         //esp need point to return address
     ((TrapFrame*)(pcb->tf))->ebp = 0;
     ((TrapFrame*)(pcb->tf))->ss = SELECTOR_USER(SEG_USER_DATA);
     ((TrapFrame*)(pcb->tf))->eflags = 0x206;
     ((TrapFrame*)(pcb->tf))->cs = SELECTOR_USER(SEG_USER_CODE);
     ((TrapFrame*)(pcb->tf))->eip = (uint32_t)pcb->entry;   //entry is new program entry
 
-	init_msg(pcb);
+   init_msg(pcb);
 
-	wakeup(pcb);
+   wakeup(pcb);
 }
 
 static int exec_memory_manager(pid_t pid, char *file_name) {
-	Msg m;
-	m.src = PCB_MANAGER;
-	m.i[0] = pid;
-	m.i[1] = (int)file_name;
-	m.type = EXEC_MEMORY;
-	send(MEMORY, &m);
-	receive(MEMORY, &m);
-	return m.ret;             //stack_head, stack has saved argment string.
+   Msg m;
+   m.src = PCB_MANAGER;
+   m.i[0] = pid;
+   m.i[1] = (int)file_name;
+   m.type = EXEC_MEMORY;
+   send(MEMORY, &m);
+   receive(MEMORY, &m);
+   return m.ret;             //stack_head, stack has saved argment string.
 }
 
 static void exit(Msg *m) {
-	PCB *pcb = &pcb_pool[m->src];
+   PCB *pcb = &pcb_pool[m->src];
 
     exit_memory(pcb);     //tell memory_manager takeback pages.
 
@@ -275,9 +275,9 @@ static void exit(Msg *m) {
     unlock();
 
     if(pcb->parent_wait) {     //if parent pcb call waitpid send msg to wakeup it;
-     	m->src = PCB_MANAGER;
-     	m->ret = m->i[0];
-     	send(pcb->ppid, m);
+        m->src = PCB_MANAGER;
+        m->ret = m->i[0];
+        send(pcb->ppid, m);
     }
 }
 
@@ -291,30 +291,30 @@ static void exit_file(PCB *pcb) {
 }
 
 static void exit_memory(PCB *pcb) {
-	Msg m;
-	m.src = PCB_MANAGER;
-	m.type = EXIT_MEMORY;
-	m.i[0] = pcb->pid;
-	send(MEMORY, &m);
-	receive(MEMORY, &m);
+   Msg m;
+   m.src = PCB_MANAGER;
+   m.type = EXIT_MEMORY;
+   m.i[0] = pcb->pid;
+   send(MEMORY, &m);
+   receive(MEMORY, &m);
 }
 
 static void handle_waitpid(Msg *m) {
-	PCB *ppcb = &pcb_pool[m->src];
-	PCB *cpcb = &pcb_pool[m->i[0]];
+   PCB *ppcb = &pcb_pool[m->src];
+   PCB *cpcb = &pcb_pool[m->i[0]];
     lock();
-	if(cpcb->pid >= 0 && cpcb->pid < 50) {
-		if(ppcb->pid == cpcb->ppid && cpcb->is_used) {
-			cpcb->parent_wait = true;
-			return;
-		}
-	}
+   if(cpcb->pid >= 0 && cpcb->pid < 50) {
+      if(ppcb->pid == cpcb->ppid && cpcb->is_used) {
+         cpcb->parent_wait = true;
+         return;
+      }
+   }
     unlock();
-	//indicate no valid pid;
-	m->dest = m->src;
-	m->ret = -1;
-	m->src = PCB_MANAGER;
-	send(m->dest, m);
+   //indicate no valid pid;
+   m->dest = m->src;
+   m->ret = -1;
+   m->src = PCB_MANAGER;
+   send(m->dest, m);
 }
 
 //usr process in ring0, as kernel process.
@@ -339,10 +339,10 @@ static void init_pcb(PCB *pcb) {
 
 /*
 static void fork(Msg *m) {
-	lock();
-	PCB *new_pcb = list_entry(free_pcb.list.next, PCB, list);
-	assert(new_pcb->pid <= 27);
-	list_del(&new_pcb->list);
+   lock();
+   PCB *new_pcb = list_entry(free_pcb.list.next, PCB, list);
+   assert(new_pcb->pid <= 27);
+   list_del(&new_pcb->list);
      unlock();
 
      PCB *ppcb = &pcb_pool[m->src];
@@ -365,9 +365,9 @@ static void fork(Msg *m) {
      list_add_before(&(wait_head.list), &(new_pcb->list));
 
      m->dest = m->src;
-	m->src = PCB_MANAGER;
-	m->ret = new_pcb->pid;
-	send(m->dest, m);
+   m->src = PCB_MANAGER;
+   m->ret = new_pcb->pid;
+   send(m->dest, m);
 
 }
 */

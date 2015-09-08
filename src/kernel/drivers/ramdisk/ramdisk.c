@@ -30,13 +30,13 @@ void ram_driver_thread(void) {
     Msg m;
     while(true) {
         receive(ANY, &m);
-    	switch(m.type) {
-    	   case DEV_READ: read_ram(&m);
+       switch(m.type) {
+          case DEV_READ: read_ram(&m);
                break;
            case DEV_WRITE: write_ram(&m);
                break;
-    	   default: assert(0);
-    	}
+          default: assert(0);
+       }
     }
 }
 

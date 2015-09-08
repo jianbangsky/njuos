@@ -39,31 +39,31 @@ typedef int size_t;
 typedef int inode_t;
 
 typedef struct iNode_entry {
-	size_t size;
-	int type;
-	int dev_id;
-	int link;
-	block_t index[15];
+   size_t size;
+   int type;
+   int dev_id;
+   int link;
+   block_t index[15];
 }iNode_entry;
 
 typedef struct vnode_entry{
-	inode_t index;
-	iNode_entry inode;
-	int count;
-	ListHead list;
+   inode_t index;
+   iNode_entry inode;
+   int count;
+   ListHead list;
 } vnode_entry;
 
 typedef struct dir_entry {
-	char filename[32];
-	inode_t index;
+   char filename[32];
+   inode_t index;
 } dir_entry;
 
 typedef struct Open_file_entry{
-	int flag;
-	uint32_t offset;
-	int count;
-	vnode_entry *vnode;
-	ListHead list;
+   int flag;
+   uint32_t offset;
+   int count;
+   vnode_entry *vnode;
+   ListHead list;
 } Open_file_entry;
 
 void read_bitmap_from_disk();

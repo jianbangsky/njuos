@@ -21,53 +21,53 @@ void os_init_cont(void);
 void
 os_init(void) {
 
-	/* Notice that when we are here, IF is always 0 (see bootloader) */
+   /* Notice that when we are here, IF is always 0 (see bootloader) */
 
-	/* We must set up kernel virtual memory first because our kernel
-	   thinks it is located in 0xC0000000.
-	   Before setting up correct paging, no global variable can be used. */
-	init_page();
+   /* We must set up kernel virtual memory first because our kernel
+      thinks it is located in 0xC0000000.
+      Before setting up correct paging, no global variable can be used. */
+   init_page();
 
-	/* After paging is enabled, we can jump to the high address to keep 
-	 * consistent with virtual memory, although it is not necessary. */
-	asm volatile (" addl %0, %%esp\n\t\
-					jmp *%1": : "r"(KOFFSET), "r"(os_init_cont));
+   /* After paging is enabled, we can jump to the high address to keep 
+    * consistent with virtual memory, although it is not necessary. */
+   asm volatile (" addl %0, %%esp\n\t\
+               jmp *%1": : "r"(KOFFSET), "r"(os_init_cont));
 
-	assert(0);	// should not reach here
+   assert(0);   // should not reach here
 }
 
 void
 os_init_cont(void) {
-	/* Reset the GDT. Although user processes in Nanos run in Ring 0,
-	   they have their own virtual address space. Therefore, the
-	   old GDT located in physical address 0x7C00 cannot be used again. */
-	init_segment();
+   /* Reset the GDT. Although user processes in Nanos run in Ring 0,
+      they have their own virtual address space. Therefore, the
+      old GDT located in physical address 0x7C00 cannot be used again. */
+   init_segment();
 
-	/* Initialize the serial port. After that, you can use printk() */
-	init_serial();
+   /* Initialize the serial port. After that, you can use printk() */
+   init_serial();
 
-	/* Set up interrupt and exception handlers,
-	   just as we did in the game. */
-	init_idt();
+   /* Set up interrupt and exception handlers,
+      just as we did in the game. */
+   init_idt();
 
-	/* Initialize the intel 8259 PIC. */
-	init_intr();
+   /* Initialize the intel 8259 PIC. */
+   init_intr();
 
-	/* Initialize processes. You should fill this. */
-	init_proc();
+   /* Initialize processes. You should fill this. */
+   init_proc();
 
-	welcome();
+   welcome();
 
-	sti();
+   sti();
 
-	/* This context now becomes the idle process. */
-	while (1) {
-		wait_intr();
-	}
+   /* This context now becomes the idle process. */
+   while (1) {
+      wait_intr();
+   }
 }
 
 
 void
 welcome(void) {
-	printk("Hello, OS World!\n");
+   printk("Hello, OS World!\n");
 }

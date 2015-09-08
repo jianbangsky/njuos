@@ -11,7 +11,7 @@ extern CR3 kcr3;
 
 static void wrap(void *fun, int argc, char *argv[]) {
 
-	//((void(*)(int, char**))fun)(argc, argv);
+   //((void(*)(int, char**))fun)(argc, argv);
      ((void(*)())fun)();
      
      lock();

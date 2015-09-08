@@ -4,8 +4,8 @@
 #define HZ        100
 
 typedef struct Time {
-	int year, month, day;
-	int hour, minute, second;
+   int year, month, day;
+   int hour, minute, second;
 } Time;
 inline long get_jiffy();
 

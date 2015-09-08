@@ -10,9 +10,9 @@
 #define NEW_TIMER -1
 
 typedef struct Time_node{
-	int pid;
-	int sec;
-	ListHead list;
+   int pid;
+   int sec;
+   ListHead list;
 } Time_node;
 
 pid_t TIMER;
@@ -31,27 +31,27 @@ static void init_wait_list();
 static void add_time_event(Msg *m);
 
 void init_timer(void) {
-	init_i8253();
-	init_rt();
-	init_wait_list();       //timing event
-	add_irq_handle(0, update_jiffy);
-	PCB *p = create_kthread(timer_driver_thread);
-	TIMER = p->pid;
-	wakeup(p);
-	hal_register("timer", TIMER, 0);
+   init_i8253();
+   init_rt();
+   init_wait_list();       //timing event
+   add_irq_handle(0, update_jiffy);
+   PCB *p = create_kthread(timer_driver_thread);
+   TIMER = p->pid;
+   wakeup(p);
+   hal_register("timer", TIMER, 0);
 }
 
 static void
 timer_driver_thread(void) {
-	static Msg m;
-	while (true) {
-		receive(ANY, &m);
-		switch (m.type) {
+   static Msg m;
+   while (true) {
+      receive(ANY, &m);
+      switch (m.type) {
                                 case NEW_TIMER: add_time_event(&m);
                                         break;
-		      default: assert(0);
-		}
-	}
+            default: assert(0);
+      }
+   }
 }
 
 static void add_time_event(Msg *m) {
@@ -68,43 +68,43 @@ static void add_time_event(Msg *m) {
     list_foreach(ptr, &wait_queue) {
         Time_node *node = list_entry(ptr, Time_node, list);
         if(new_time->sec < node->sec) {
-        	    node->sec -= new_time->sec;
-        	    break;
+               node->sec -= new_time->sec;
+               break;
         } else {
-        	    new_time->sec -= node->sec;
+               new_time->sec -= node->sec;
         }
     }
     list_add_before(ptr, &new_time->list);
 }
 
 static void init_wait_list() {
-	list_init(&wait_queue);
-	list_init(&free_list);
-	int i;
-	for(i = 0; i < 100; i++) {
-	    list_add_before(&free_list, &time_vec[i].list);
-	}
+   list_init(&wait_queue);
+   list_init(&free_list);
+   int i;
+   for(i = 0; i < 100; i++) {
+       list_add_before(&free_list, &time_vec[i].list);
+   }
 }
 
 static void time_event_proc() {
     if(!list_empty(&wait_queue)) {
-    	    Time_node *first = list_entry(wait_queue.next, Time_node, list);
-    	    first -> sec--;
-    	    ListHead *ptr = wait_queue.next;
-    	    while(ptr != &wait_queue) {
-    	    	    Time_node *node = list_entry(ptr, Time_node, list);
-    	    	    if(node->sec == 0) {
-    	    	    	    Msg m;
-    	    	    	    m.src = TIMER;
-    	    	    	    send(node->pid, &m);
-    	    	    	    ListHead *p = ptr;
-    	    	    	    ptr = ptr -> next;
-    	    	    	    list_del(p);
-    	    	    	    list_add_before(&free_list, p);
-    	    	    } else {
-    	    	    	    break;
-    	    	    }
-    	    }
+           Time_node *first = list_entry(wait_queue.next, Time_node, list);
+           first -> sec--;
+           ListHead *ptr = wait_queue.next;
+           while(ptr != &wait_queue) {
+                  Time_node *node = list_entry(ptr, Time_node, list);
+                  if(node->sec == 0) {
+                         Msg m;
+                         m.src = TIMER;
+                         send(node->pid, &m);
+                         ListHead *p = ptr;
+                         ptr = ptr -> next;
+                         list_del(p);
+                         list_add_before(&free_list, p);
+                  } else {
+                         break;
+                  }
+           }
     }
 }
 
@@ -112,39 +112,39 @@ static void time_event_proc() {
 
 long
 get_jiffy() {
-	return jiffy;
+   return jiffy;
 }
 
 static int
 md(int year, int month) {
-	bool leap = (year % 400 == 0) || (year % 4 == 0 && year % 100 != 0);
-	static int tab[13] = {0, 31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31};
-	return tab[month] + (leap && month == 2);
+   bool leap = (year % 400 == 0) || (year % 4 == 0 && year % 100 != 0);
+   static int tab[13] = {0, 31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31};
+   return tab[month] + (leap && month == 2);
 }
 
 static void
 update_jiffy(void) {
-	jiffy ++;
-	if (jiffy % HZ == 0) {
-		rt.second ++;
-		if (rt.second >= 60) { rt.second = 0; rt.minute ++; }
-		if (rt.minute >= 60) { rt.minute = 0; rt.hour ++; }
-		if (rt.hour >= 24)   { rt.hour = 0;   rt.day ++;}
-		if (rt.day >= md(rt.year, rt.month)) { rt.day = 1; rt.month ++; } 
-		if (rt.month >= 13)  { rt.month = 1;  rt.year ++; }
+   jiffy ++;
+   if (jiffy % HZ == 0) {
+      rt.second ++;
+      if (rt.second >= 60) { rt.second = 0; rt.minute ++; }
+      if (rt.minute >= 60) { rt.minute = 0; rt.hour ++; }
+      if (rt.hour >= 24)   { rt.hour = 0;   rt.day ++;}
+      if (rt.day >= md(rt.year, rt.month)) { rt.day = 1; rt.month ++; } 
+      if (rt.month >= 13)  { rt.month = 1;  rt.year ++; }
 
                            time_event_proc();
  
-	}
+   }
 }
 
 static void
 init_i8253(void) {
-	int count = FREQ_8253 / HZ;
-	assert(count < 65536);
-	out_byte(PORT_TIME + 3, 0x34);
-	out_byte(PORT_TIME, count & 0xff);
-	out_byte(PORT_TIME, count >> 8);	
+   int count = FREQ_8253 / HZ;
+   assert(count < 65536);
+   out_byte(PORT_TIME + 3, 0x34);
+   out_byte(PORT_TIME, count & 0xff);
+   out_byte(PORT_TIME, count >> 8);   
 }
 
 
@@ -173,5 +173,5 @@ init_rt(void) {
 
 void 
 get_time(Time *tm) {
-	memcpy(tm, &rt, sizeof(Time));
+   memcpy(tm, &rt, sizeof(Time));
 }

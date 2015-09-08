@@ -15,10 +15,10 @@ void make_pde(PDE *, void *);
 void make_pte(PTE *, void *);
 
 #define va_to_pa(addr) \
-	((void*)(((uint32_t)(addr)) - KOFFSET))
+   ((void*)(((uint32_t)(addr)) - KOFFSET))
 
 #define pa_to_va(addr) \
-	((void*)(((uint32_t)(addr)) + KOFFSET))
+   ((void*)(((uint32_t)(addr)) + KOFFSET))
 
 /* the maxinum kernel size is 16MB */
 #define KMEM    (16 * 1024 * 1024)

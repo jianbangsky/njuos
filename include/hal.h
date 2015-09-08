@@ -12,11 +12,11 @@
 void add_irq_handle(int, void (*)(void));
 
 typedef struct Device {
-	const char *name;
-	pid_t pid;
-	int dev_id;
-	
-	ListHead list;
+   const char *name;
+   pid_t pid;
+   int dev_id;
+   
+   ListHead list;
 } Dev;
 
 size_t dev_read(const char *dev_name, pid_t reqst_pid, void *buf ,off_t offset, size_t len);

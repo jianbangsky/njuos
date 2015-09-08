@@ -9,16 +9,16 @@
 #define RSTK_SZ        16
 
 typedef struct Console {
-	const char *name;
-	uint16_t *vbuf;
-	uint16_t *scr;
-	int w, h, wh;
-	int size, pos;
-	char lbuf[LBUF_SZ + 1];
-	char cbuf[CBUF_SZ + 1];
-	int i, f, r;
-	int rtop;
-	Msg rstk[RSTK_SZ];
+   const char *name;
+   uint16_t *vbuf;
+   uint16_t *scr;
+   int w, h, wh;
+   int size, pos;
+   char lbuf[LBUF_SZ + 1];
+   char cbuf[CBUF_SZ + 1];
+   int i, f, r;
+   int rtop;
+   Msg rstk[RSTK_SZ];
 } Console;
 
 extern pid_t TTY;

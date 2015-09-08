@@ -8,12 +8,12 @@ void init_ramdisk();
 
 
 void init_driver() {
-	init_hal();
-	init_timer();
-	init_tty();
-	init_ide();
+   init_hal();
+   init_timer();
+   init_tty();
+   init_ide();
 
-	init_ramdisk();
+   init_ramdisk();
 
-	hal_list();
+   hal_list();
 }
