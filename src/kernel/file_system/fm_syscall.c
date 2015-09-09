@@ -91,6 +91,11 @@ void init_file_format() {
    root_dir->index = 0;
    strcpy(root_dir->filename, "/");
 
+   char *s1 = ".";
+   char *s2 = "..";
+   add_inode_into_dir(0, s1, 0);
+   add_inode_into_dir(0, s2, 0);
+
    stdin_vnode = get_free_vnode();
    stdout_vnode = get_free_vnode();
    stderr_vnode = get_free_vnode();
@@ -1286,6 +1291,13 @@ void fm_chdir(Msg *m) {
    char path_buf[256];
    copy_to_kernel(pcb, path_buf, buf, 256);
    char* path = path_buf;
+   if(path[0] == '\0') {
+      m->dest = pcb->pid;
+      m->src = FILE;
+      m->ret = 0;
+      send(pcb->pid, m);
+      return;
+   }
    if(path[0] == '/') {
       dir = root_dir;
       path += 1;
