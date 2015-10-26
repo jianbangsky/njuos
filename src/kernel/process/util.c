@@ -12,22 +12,22 @@ extern CR3 kcr3;
 static void wrap(void *fun, int argc, char *argv[]) {
 
    //((void(*)(int, char**))fun)(argc, argv);
-     ((void(*)())fun)();
+    ((void(*)())fun)();
      
-     lock();
-     current->is_used = false;
-     ListHead *prev = current->list.prev;
-     list_del(&(current->list));
-     list_add_before(&(free_pcb.list), &(current->list));
-     pre_current = list_entry(prev, PCB, list);
-     unlock();
+    lock();
+    current->is_used = false;
+    ListHead *prev = current->list.prev;
+    list_del(&(current->list));
+    list_add_before(&(free_pcb.list), &(current->list));
+    pre_current = list_entry(prev, PCB, list);
+    unlock();
 
-     asm volatile("int  $0x80");
+    asm volatile("int  $0x80");
 }
 
 PCB* fetch_pcb(pid_t pid) {
-        assert((pid >= 0) &&(pid < POOL_NUM));
-        return &pcb_pool[pid];
+    assert((pid >= 0) &&(pid < POOL_NUM));
+    return &pcb_pool[pid];
 }
 
 PCB*

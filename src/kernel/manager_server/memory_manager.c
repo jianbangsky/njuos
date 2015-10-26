@@ -312,8 +312,8 @@ static void copy_process(PCB *ppcb, PCB *cpcb) {
    uint8_t *p_pframe, *c_pframe;
    uint32_t pdir_idx, ptable_idx;
      
-        pdir_idx = KERNEL_MEM / PD_SIZE;
-        uint32_t pdir_end = 0xc0000000 / PD_SIZE;
+   pdir_idx = KERNEL_MEM / PD_SIZE;
+   uint32_t pdir_end = 0xc0000000 / PD_SIZE;
    for( ; pdir_idx < pdir_end; pdir_idx++) {     
       if(p_pdir[pdir_idx].present) {
          p_ptable = (PTE *)(p_pdir[pdir_idx].page_frame << 12);

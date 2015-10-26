@@ -21,7 +21,7 @@ getty(void) {
       if(!nread) {
          continue;
       }
-             int i;
+      int i;
       for(i = 0; i < nread; i++) {
          if(buf[i] >= 'a' && buf[i] <= 'z') {
             buf[i] -= 'a' - 'A';

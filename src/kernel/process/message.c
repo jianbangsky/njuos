@@ -18,18 +18,18 @@ void send(pid_t dest, Msg *m){
    PCB *pcb = &pcb_pool[dest];
    lock();
    Msg *msg = list_entry(pcb->free_queue.next, Msg, list);
-        list_del(&msg->list);
+     list_del(&msg->list);
 
-       *msg = *m;
-       msg->dest = dest;
-       list_add_before(&pcb->msg_queue, &(msg->list));
+     *msg = *m;
+     msg->dest = dest;
+     list_add_before(&pcb->msg_queue, &(msg->list));
 
-       V(&pcb->any_sem);
+     V(&pcb->any_sem);
 
-       int src = (m->src == -2) ? POOL_NUM : m->src;   //interrupt send massage
-       V(&pcb->pid_sem[src]);
+     int src = (m->src == -2) ? POOL_NUM : m->src;   //interrupt send massage
+     V(&pcb->pid_sem[src]);
 
-       unlock();
+     unlock();
     
 }
 
@@ -42,7 +42,7 @@ void receive(pid_t src, Msg *m) {
       int real_src = (msg->src == -2) ? POOL_NUM : msg->src;
       P(&(current->pid_sem[real_src]));
    } else {
-        int real_src = (src == -2) ? POOL_NUM : src;        
+      int real_src = (src == -2) ? POOL_NUM : src;        
       P(&current->pid_sem[real_src]);
       P(&current->any_sem);
       ListHead *ptr;
@@ -59,6 +59,6 @@ void receive(pid_t src, Msg *m) {
 
    *m = *msg;
      
-        list_add_before(&current->free_queue, &msg->list);
-        unlock();
+   list_add_before(&current->free_queue, &msg->list);
+   unlock();
 }

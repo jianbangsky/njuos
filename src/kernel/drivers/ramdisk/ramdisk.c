@@ -19,24 +19,24 @@ static void ram_driver_thread(void);
 
 
 void init_ramdisk(void) {
-        PCB *p = create_kthread(ram_driver_thread);
-        RAMDISK = p -> pid;
-        wakeup(p);
-        hal_register("ram", RAMDISK, 0);
-        //test_init();
+    PCB *p = create_kthread(ram_driver_thread);
+    RAMDISK = p -> pid;
+    wakeup(p);
+    hal_register("ram", RAMDISK, 0);
+    //test_init();
 }
 
 void ram_driver_thread(void) {
     Msg m;
     while(true) {
         receive(ANY, &m);
-       switch(m.type) {
-          case DEV_READ: read_ram(&m);
-               break;
-           case DEV_WRITE: write_ram(&m);
-               break;
-          default: assert(0);
-       }
+        switch(m.type) {
+            case DEV_READ: read_ram(&m);
+                break;
+            case DEV_WRITE: write_ram(&m);
+                break;
+            default: assert(0);
+        }
     }
 }
 

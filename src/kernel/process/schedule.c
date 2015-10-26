@@ -11,7 +11,7 @@ schedule(void) {
    if(current -> is_head) {
       current = list_entry(current->list.next, PCB, list);
    }
-        pre_current = current;
-        set_tss_esp0((uint32_t)(current->kstack + KSTACK_SIZE-1));
+   pre_current = current;
+   set_tss_esp0((uint32_t)(current->kstack + KSTACK_SIZE-1));
    write_cr3(&current->cr3);          //switch page register
 }
